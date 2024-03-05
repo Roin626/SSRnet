@@ -35,7 +35,7 @@ class UNetDUp(nn.Module):
     def __init__(self, in_size, out_size, dropout=0.0):
         super(UNetDUp, self).__init__()
         layers = [
-            DUpsampling(in_size,out_size, 2, num_class=out_size),
+            FBupsampling(in_size, out_size, 2, num_class=out_size),
             nn.InstanceNorm2d(out_size),
             nn.LeakyReLU(0.2),
         ]
@@ -337,9 +337,9 @@ class BackEnd(nn.Module):
     def __init__(self):
         super(BackEnd, self).__init__()
         # self.upsample = nn.UpsamplingBilinear2d(scale_factor=2)
-        self.dupsample4_3 = DUpsampling(512,512, 2, num_class=512)
-        self.dupsample3_2 = DUpsampling(256,256, 2, num_class=256)
-        self.dupsample2_1 = DUpsampling(128,128, 2, num_class=128)
+        self.dupsample4_3 = FBupsampling(512, 512, 2, num_class=512)
+        self.dupsample3_2 = FBupsampling(256, 256, 2, num_class=256)
+        self.dupsample2_1 = FBupsampling(128, 128, 2, num_class=128)
 
         self.conv1 = BaseConv(1024, 256, 1, 1, activation=nn.Tanh(), use_bn=True)
         self.conv2 = BaseConv(256, 256, 3, 1, activation=nn.Tanh(), use_bn=True)
@@ -475,3 +475,61 @@ class BaseConv(nn.Module):
             input = self.activation(input)
 
         return input
+
+
+####  self.dupsample = DUpsampling(256, 16, num_class=21)
+class FBupsampling(nn.Module):
+    def __init__(self, inplanes,outplanes, scale, num_class=21, pad=0):
+        super(FBupsampling, self).__init__()
+        ## W matrix
+        self.conv_w = nn.Conv2d(inplanes, num_class * scale * scale, kernel_size=1, padding=pad, bias=False)
+        ## P matrix
+        self.conv_p = nn.Conv2d(num_class * scale * scale, outplanes, kernel_size=1, padding=pad, bias=False)
+        self.scale = scale
+
+    def forward(self, x):
+        x = self.conv_w(x)
+        N, C, H, W = x.size()
+
+        # N, W, H, C
+        x_permuted = x.permute(0, 3, 2, 1)
+
+        # N, W, H*scale, C/scale
+        x_permuted = x_permuted.contiguous().view((N, W, H * self.scale, int(C / (self.scale))))
+
+        x_permuted = x_permuted.permute(0, 2, 1, 3) # N, H*scale, W, C/scale
+
+        x_permuted = x_permuted.contiguous().view(
+            (N, H * self.scale, W * self.scale, int(C / (self.scale * self.scale))))# N, H*scale, W*scale, C/(scale**2)
+
+        # N, C/(scale**2), H*scale, W*scale
+        x = x_permuted.permute(0, 3, 1, 2)
+
+        return x
+
+class FBUpsampling(nn.Module):
+    def __init__(self, inplanes, outplanes, scale, pad=0):
+        super(FBUpsampling, self).__init__()
+        ## new matrix
+        self.conv_w = nn.Conv2d(inplanes, outplanes * scale * scale, kernel_size=1, padding=pad, bias=False)
+        self.scale = scale
+
+    def forward(self, x):
+        x = self.conv_w(x) # N,C*scale*scale, H, W
+        N, C, H, W = x.size()
+
+        # N, W, H, C
+        x_permuted = x.permute(0, 3, 2, 1)
+
+        # N, W, H*scale, C/scale
+        x_permuted = x_permuted.contiguous().view((N, W, H * self.scale, int(C / (self.scale))))
+
+        x_permuted = x_permuted.permute(0, 2, 1, 3) # N, H*scale, W, C/scale
+
+        x_permuted = x_permuted.contiguous().view(
+            (N, H * self.scale, W * self.scale, int(C / (self.scale * self.scale))))# N, H*scale, W*scale, C/(scale**2)
+
+        # N, C/(scale**2), H*scale, W*scale
+        x = x_permuted.permute(0, 3, 1, 2)
+
+        return x

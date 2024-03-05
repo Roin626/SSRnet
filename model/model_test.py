@@ -179,7 +179,7 @@ class SSRNet(nn.Module):
 
         # self.up1 = UNetUp(512, 512, dropout=0.5)
         self.up1 = nn.Sequential(
-            FGUpsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
+            SSRupsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
         # self.up2 = UNetUp(1024, 512, dropout=0.5)
@@ -193,7 +193,7 @@ class SSRNet(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.LeakyReLU(0.2),
         )
 
@@ -259,7 +259,7 @@ class SMSEnet_N(nn.Module):
         self.up5 = UNetnearUp(256, 64)
         # self.up5 = UNetcat(256, 64)
         # self.up1 = nn.Sequential(
-        #     FGUpsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
+        #     SSRupsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
         #     nn.ReLU(inplace=True),
         # )
         self.final = nn.Sequential(
@@ -267,7 +267,7 @@ class SMSEnet_N(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
@@ -314,7 +314,7 @@ class SMSEnet_B(nn.Module):
         self.up5 = UNetbilineUp(256, 64)
         # self.up5 = UNetcat(256, 64)
         # self.up1 = nn.Sequential(
-        #     FGUpsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
+        #     SSRupsampling2(inplanes=512, outplanes=256, scale=32, k_size=1, pad=0),
         #     nn.ReLU(inplace=True),
         # )
         self.final = nn.Sequential(
@@ -322,7 +322,7 @@ class SMSEnet_B(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
@@ -372,8 +372,8 @@ class SSRNetx16(nn.Module):
             # nn.Conv2d(512, 256, kernel_size=1, stride=1, padding=0, bias=False),
             # nn.Upsample(scale_factor=16, mode='bilinear'),
             # nn.ConvTranspose2d(512, 256, 4, 16,output_padding=12, bias=False),
-            # FGUpsampling2(inplanes=512, outplanes=256, scale=16,k_size=1,  pad=0),
-            FGUpsampling2(inplanes=512, outplanes=256, scale=16, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=512, outplanes=256, scale=16,k_size=1,  pad=0),
+            SSRupsampling2(inplanes=512, outplanes=256, scale=16, k_size=1, pad=0),
 
             nn.ReLU(inplace=True),
         )
@@ -382,7 +382,7 @@ class SSRNetx16(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
@@ -430,15 +430,15 @@ class SSRNetx8(nn.Module):
         self.up5 = UNetUp(256, 64)
         # self.up5 = UNetcat(256, 64)
         self.up1 = nn.Sequential(
-            FGUpsampling2(inplanes=512, outplanes=256, scale=8, k_size=1, pad=0),
+            SSRupsampling2(inplanes=512, outplanes=256, scale=8, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
         )
         self.final = nn.Sequential(
@@ -446,7 +446,7 @@ class SSRNetx8(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
@@ -493,15 +493,15 @@ class SSRNetx4(nn.Module):
         self.up5 = UNetUp(256, 64)
         # self.up5 = UNetcat(256, 64)
         self.up1 = nn.Sequential(
-            FGUpsampling2(inplanes=512, outplanes=256, scale=4, k_size=1, pad=0),
+            SSRupsampling2(inplanes=512, outplanes=256, scale=4, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            FGUpsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
+            SSRupsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
         )
         self.final = nn.Sequential(
@@ -509,7 +509,7 @@ class SSRNetx4(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
@@ -556,15 +556,15 @@ class SSRNetx2(nn.Module):
         self.up5 = UNetUp(256, 64)
         # self.up5 = UNetcat(256, 64)
         self.up1 = nn.Sequential(
-            FGUpsampling2(inplanes=512, outplanes=256, scale=4, k_size=1, pad=0),
+            SSRupsampling2(inplanes=512, outplanes=256, scale=4, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            FGUpsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
+            SSRupsampling2(inplanes=256, outplanes=256, scale=4, k_size=1, pad=0),
             nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
-            # FGUpsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=256, outplanes=256, scale=2, k_size=1, pad=0),
             # nn.ReLU(inplace=True),
         )
         self.final = nn.Sequential(
@@ -572,7 +572,7 @@ class SSRNetx2(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(128, 3, 4, padding=1),
             # nn.Tanh(),
-            # FGUpsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
+            # SSRupsampling2(inplanes=128, outplanes=out_channels, scale=2, k_size=1, pad=0),
             nn.ReLU(inplace=True),
         )
 
